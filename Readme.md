@@ -75,9 +75,9 @@ Before you begin, make sure you have the following installed:
 git clone https://github.com/AshokAdithya/PinsecProject/
 cd PinsecProject
 
-# 2. Create virtual environment
-python3 -m venv venv
-source venv/bin/activate   # On Windows: venv\Scripts\activate
+# 2. Create virtual environment - On Windows
+python -m venv .venv
+source .venv/Scripts/Activate  
 
 # 3. Install dependencies
 pip install -r requirements.txt
@@ -85,7 +85,7 @@ pip install -r requirements.txt
 # 4. Configure environment variables
 create a file .env
 
-# Edit .env with your settings
+# Copy the contents below and paste it in your .env
 
 # API
 BINANCE_LIST=https://testnet.binance.vision/api/v3/exchangeInfo
@@ -322,5 +322,6 @@ This platform is already production-grade, but the following improvements can ma
 * Use **Interactive Charts** for interactive OHLC display.
 
 ---
+
 
 
