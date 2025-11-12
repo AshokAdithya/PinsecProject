@@ -47,7 +47,7 @@ This architecture enables you to build real-time trading dashboards, automated b
 
 ## Architecture
 
-![Crypto Dashboard]("./SystemDesign.png")
+![Crypto Dashboard](./SystemDesign.png)
 
 ---
 ## Quick Start
@@ -266,3 +266,4 @@ crypto-price-streaming-platform/
 ```
 
 ---
+
