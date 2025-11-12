@@ -315,11 +315,12 @@ This platform is already production-grade, but the following improvements can ma
 
 ### JWT Authentication & Role-Based Access
 * Secure both REST and WebSocket endpoints using **JWT tokens**.
-* Implement role-based access control (RBAC) to manage permissions (e.g., admin, user).
+* Implement role-based access control (RBAC) to manage permissions.
 
 ### Frontend Dashboard
 * Build a **React / Next.js** dashboard for real-time visualization.
-* Use **Chart.js** or **TradingView Lightweight Charts** for interactive OHLC display.
+* Use **Interactive Charts** for interactive OHLC display.
 
 ---
+
 
