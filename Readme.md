@@ -13,6 +13,9 @@ It provides both **REST APIs** and **real-time streaming** for 1s OHLC (Open-Hig
 - [Quick Start](#quick-start)
 - [API Documentation](#api-documentation)
 - [WebSocket Streaming](#websocket-streaming)
+- [Project Structure](#project-structure)
+- [Tech Stack](#tech-stack)
+- [Future Improvements](#future-improvements)
 
 ---
 
@@ -26,6 +29,11 @@ A production-ready real-time cryptocurrency price streaming system built with **
 - Broadcasts real-time updates via **WebSocket** (**Push model**)  
 - Supports **dynamic symbol management** (add/remove on the fly)  
 - Features comprehensive **error handling and logging**
+- Implements **parallel WebSocket connections per symbol**
+- Uses **WebSocket compression** for optimized performance
+- Supports **asynchronous broadcasting** for concurrent client updates
+- Applies **rate limiting per IP address** (via SlowAPI)
+- Handles **auto-reconnection, symbol validation**
 
 This architecture enables you to build real-time trading dashboards, automated bots, or analytics systems on top of a stable and scalable backend.
 
@@ -37,11 +45,16 @@ This architecture enables you to build real-time trading dashboards, automated b
 | :--- | :--- |
 | **Live Price Streaming** | Real-time tick data from Binance Testnet. |
 | **1-Second OHLC** | Precise candle generation aligned to clock seconds. |
+| **Parallel Binance Streams** | Each trading symbol runs on its own async WebSocket connection. |
 | **REST API** | FastAPI endpoints for querying market data. |
 | **WebSocket Push** | Live candle broadcasts to connected clients. |
 | **Symbol Management** | Add/remove trading pairs dynamically via API. |
 | **Auto-Reconnection** | Resilient connection with exponential backoff. |
 | **Symbol Validation** | Validates against live Binance Testnet symbols. |
+| **Rate Limiting (IP-based)** | Per-client request limits with SlowAPI. |
+| **Async Broadcasting** | Concurrent message delivery to all clients. |
+| **WebSocket Compression** | Uses deflate for efficient streaming. |
+
 
 ---
 
@@ -250,7 +263,8 @@ crypto-price-streaming-platform/
 │   ├── utils/
 │   │   ├── __init__.py
 │   │   ├── logger.py                # Logging configuration
-│   │   └── time_format.py           # Timestamp formatting (IST)
+│   │   ├── time_format.py           # Timestamp formatting (IST)
+|   |   └── limiter.py               # Global rate limiter
 │   │
 │   └── websocket/
 │       ├── __init__.py
@@ -264,6 +278,48 @@ crypto-price-streaming-platform/
 ├── requirements.txt                 # Python dependencies
 └── README.md             
 ```
+
+---
+
+##  Tech Stack
+
+* **FastAPI** — High-performance Python web framework
+* **Uvicorn** — ASGI server with WebSocket & compression support
+* **WebSockets** — Real-time streaming communication
+* **Binance Testnet** — Live market data source
+* **SlowAPI** — IP-based rate limiting
+* **Asyncio** — Concurrency and background tasks
+* **Python-Dotenv** — Environment variable management
+
+---
+
+## Future Improvements
+
+This platform is already production-grade, but the following improvements can make it enterprise-ready and more feature-rich.
+
+### Database Integration
+* Store historical tick and **OHLC** data using **PostgreSQL** or **TimescaleDB**.
+* Enables historical analytics, advanced charting, and backtesting capabilities.
+
+### Redis for Scalability
+* Use **Redis Pub/Sub** for multi-instance broadcasting and caching.
+* Share active symbol states across multiple server instances and improve fault tolerance.
+
+### Reduced Payload & Protobuf
+* Replace JSON with **Protocol Buffers (protobuf)** for compact serialization.
+* Achieve smaller payloads, faster parsing, and cross-language compatibility.
+
+### Price Alerts & Twilio Integration
+* Allow users to set custom alerts for specific price thresholds.
+* Notify users instantly via **Twilio SMS** or WhatsApp integration.
+
+### JWT Authentication & Role-Based Access
+* Secure both REST and WebSocket endpoints using **JWT tokens**.
+* Implement role-based access control (RBAC) to manage permissions (e.g., admin, user).
+
+### Frontend Dashboard
+* Build a **React / Next.js** dashboard for real-time visualization.
+* Use **Chart.js** or **TradingView Lightweight Charts** for interactive OHLC display.
 
 ---
 
