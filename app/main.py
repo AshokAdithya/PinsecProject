@@ -1,14 +1,17 @@
 import asyncio
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from contextlib import asynccontextmanager
 from app.api.routes import router
 from app.config.binance_symbols import fetch_testnet_symbols
 from app.websocket.server import start_ws_server
 from app.binance.client import BinanceClient
 from app.utils.logger import logger
+from app.utils.limiter import limiter
 import uvicorn
 import os
 from dotenv import load_dotenv
+from slowapi.errors import RateLimitExceeded
+from fastapi.responses import JSONResponse
 
 load_dotenv()
 
@@ -32,6 +35,7 @@ async def lifespan(app: FastAPI):
     #  when shutdown
     logger.info("SHUTTING DOWN CRYPTO PRICE STREAMING PLATFORM")
 
+
 app = FastAPI(
     title="Crypto Price Streaming Platform",
     description="Real-time 1s OHLC, Tick from Binance Testnet",
@@ -40,6 +44,15 @@ app = FastAPI(
 )
 
 app.include_router(router)
+
+app.state.limiter = limiter
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    return JSONResponse(
+        status_code=429,
+        content={"error": "Too many requests", "detail": f"{exc.detail}"}
+    )
 
 # Check endpoint
 @app.get("/")

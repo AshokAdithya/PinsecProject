@@ -4,6 +4,7 @@ from app.core.broadcaster import broadcast
 from app.core.models import Tick, Candle
 import asyncio
 
+
 class SymbolManager:
     def __init__(self):
         self.aggregators: Dict[str, SymbolAggregator] = {}
@@ -35,10 +36,15 @@ class SymbolManager:
 
     # processing the latest tick to get the correct 1s - OHLC
     def process_tick(self, tick: Tick):
+        symbol = tick.symbol.upper()
+
+        if symbol not in self.aggregators:
+            return
+
         self.latest_tick[tick.symbol] = tick
+
         agg = self.aggregators.get(tick.symbol)
-        if agg:
-            agg.process_tick(tick)
+        agg.process_tick(tick)
 
     def get_tick(self, symbol: str):
         return self.latest_tick.get(symbol.upper())
@@ -48,5 +54,6 @@ class SymbolManager:
 
     def list_symbols(self):
         return list(self.aggregators.keys())
+
 
 manager = SymbolManager()

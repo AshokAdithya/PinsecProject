@@ -10,6 +10,7 @@ load_dotenv()
 websocket_ip = os.getenv("WEBSOCKET_IP")
 websocket_port = os.getenv("WEBSOCKET_PORT")
 
+
 # Handling Multiple clients for websockets
 async def handler(websocket):
     clients.add(websocket)
@@ -22,7 +23,16 @@ async def handler(websocket):
     finally:
         clients.discard(websocket)
 
+
 async def start_ws_server():
-    server = await websockets.serve(handler, websocket_ip, websocket_port)
+    server = await websockets.serve(
+        handler,
+        websocket_ip,
+        websocket_port,
+        compression="deflate",
+        max_size=2**20,
+        ping_interval=20,
+        ping_timeout=20,
+    )
     logger.info(f"WebSocket server running on {websocket_ip}:{websocket_port}")
     await server.wait_closed()
